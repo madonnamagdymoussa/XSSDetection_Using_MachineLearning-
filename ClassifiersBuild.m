@@ -1,14 +1,9 @@
-%% Load and Preprocess Data
-XSSTesting = readtable('XSSTesting.csv', 'VariableNamingRule', 'preserve'); % Preserve headers
-DatasetTest = XSSTesting;
-% Extract features and target variable
-TBL = table2array(DatasetTest(:,1:Si(1,2)-1));  % Convert features to numeric array
-ResponseVarName = DatasetTest.(DatasetTest.Properties.VariableNames{Si(1,2)});  % Extract target variable
-
 %% Training Classifiers  % **Add this section**
 % Load training data (adjust file path as needed)
 XSSTraining = readtable('XSSTraining.csv', 'VariableNamingRule', 'preserve');
 DatasetTrain = XSSTraining;
+
+Si = size(DatasetTrain);
 trainFeatures = table2array(DatasetTrain(:,1:Si(1,2)-1));  % Extract training features
 trainResponseVarName = DatasetTrain.(DatasetTrain.Properties.VariableNames{Si(1,2)});  % Extract training labels
 
@@ -31,10 +26,10 @@ else
 end
 
 %% Testing Classifiers
-predictedLabels = predict(classifier, TBL);  % Use the trained model for testing
+predictedLabels = predict(classifier, trainFeatures);  % Use the trained model for testing
 PerformanceTime = toc; % Stop timer
 
-CM = confusionmat(ResponseVarName, predictedLabels);  % Create confusion matrix
+CM = confusionmat(trainResponseVarName, predictedLabels);  % Create confusion matrix
 
 accuracy = (CM(1,1)+CM(2,2))/(sum(sum(CM)));  % Calculate accuracy
 precision = CM(1,1)/(CM(1,1)+CM(1,2));  % Calculate precision
