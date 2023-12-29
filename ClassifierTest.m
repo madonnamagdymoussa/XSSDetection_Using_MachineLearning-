@@ -2,6 +2,7 @@
 %% Load and Preprocess Data
 XSSTesting = readtable('XSSTesting.csv', 'VariableNamingRule', 'preserve'); % Preserve headers
 DatasetTest = XSSTesting;
+Si = size(DatasetTest);
 % Extract features and target variable
 TBL = table2array(DatasetTest(:,1:Si(1,2)-1));  % Convert features to numeric array
 ResponseVarName = DatasetTest.(DatasetTest.Properties.VariableNames{Si(1,2)});  % Extract target variable
@@ -17,13 +18,8 @@ tic; % Start timer
 %% Testing Classifiers
 
 
-% Uncomment the line for the classifier you want to test
-%label = predict(SVML, TBL);
- %label = predict(SVMP, TBL);
-% label = predict(KNN, TBL);
-% Label = predict(RF, TBL);
 
-classifierType = 'SVML';
+classifierType = 'KNN';
 % Tuned linear SVM
 if strcmp(classifierType, 'SVML')
     classifier = fitcsvm(trainFeatures, trainResponseVarName, 'KernelFunction', 'linear', 'BoxConstraint', 7);
@@ -40,6 +36,14 @@ elseif strcmp(classifierType, 'KNN')
 elseif strcmp(classifierType, 'RF')
     classifier = TreeBagger(40, trainFeatures, trainResponseVarName, 'Method', 'classification');  % Assuming TreeBagger is used for Random Forest
 end
+% Uncomment the line for the classifier you want to test
+label = predict(classifier, TBL);
+ %label = predict(SVML, TBL);
+% label = predict(KNN, TBL);
+% Label = predict(RF, TBL);
+% Label = str2num(cell2mat(Label));
+
+
 
 %% Load and Preprocess Data
 XSSTesting = readtable('XSSTesting.csv', 'VariableNamingRule', 'preserve'); % Preserve headers
